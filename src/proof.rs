@@ -1,3 +1,4 @@
+//! A notion of a cryptographic proof of a value in a Merkle tree.
 use std::cmp::Ordering;
 use std::hash::{Hash, Hasher};
 
@@ -182,8 +183,13 @@ impl<T> Proof<T> {
 #[cfg_attr(feature = "serialization-serde", derive(Serialize, Deserialize))]
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Lemma {
+    /// The hash of a node.
     pub node_hash: Vec<u8>,
+    /// The hash of the child node under which the value NOT located. Also
+    /// recorded in the type is the direction of the sibling from the lemma
+    /// node. The value is consequently located in the other direction.
     pub sibling_hash: Option<Positioned<Vec<u8>>>,
+    /// The hash of the child node under which the value IS located.
     pub sub_lemma: Option<Box<Lemma>>,
 }
 

@@ -20,7 +20,7 @@ extern crate serde_derive;
 mod merkletree;
 pub use merkletree::MerkleTree;
 
-mod proof;
+pub mod proof;
 pub use proof::Proof;
 
 mod hashutils;
