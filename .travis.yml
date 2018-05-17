@@ -16,7 +16,7 @@ matrix:
     - env: NAME='nightly'
       rust: nightly
     - env: NAME='rustfmt'
-      rust: nightly
+      rust: nightly-2018-05-14
       before_script:
         - rustup component add rustfmt-preview
       script:
@@ -38,7 +38,7 @@ matrix:
             - libdw-dev
             - binutils-dev
             - libiberty-dev
-            - zlib1g-dev 
+            - zlib1g-dev
     - env:
         - NAME='clippy'
         # use env so updating versions causes cache invalidation
@@ -47,7 +47,7 @@ matrix:
       before_script:
         - cargo install clippy --version $CLIPPY_VERSION || echo "clippy already installed"
       script:
-        - cargo clippy --all -- -D clippy
+        - cargo clippy --all --tests --all-features -- -D clippy
 
 env:
   global:

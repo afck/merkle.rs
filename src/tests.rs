@@ -51,7 +51,7 @@ fn test_from_vec1() {
     let values = vec!["hello, world".to_string()];
     let tree = MerkleTree::from_vec(digest, values);
 
-    let root_hash = &digest.hash_leaf(&"hello, world".as_bytes());
+    let root_hash = &digest.hash_leaf(b"hello, world");
 
     assert_eq!(tree.count(), 1);
     assert_eq!(tree.height(), 0);
@@ -153,7 +153,7 @@ fn test_wrong_proof() {
 #[test]
 fn test_nth_proof() {
     // Calculation depends on the total count. Try a few numbers: odd, even, powers of two...
-    for &count in [1, 2, 3, 10, 15, 16, 17, 22].iter() {
+    for &count in &[1, 2, 3, 10, 15, 16, 17, 22] {
         let values = (1..(count + 1)).map(|x| vec![x as u8]).collect::<Vec<_>>();
         let tree = MerkleTree::from_vec(digest, values.clone());
         let root_hash = tree.root_hash();
@@ -173,9 +173,7 @@ fn test_mutate_proof_first_lemma() {
     let tree = MerkleTree::from_vec(digest, values.clone());
     let root_hash = tree.root_hash();
 
-    let mut i = 0;
-
-    for value in values {
+    for (i, value) in values.into_iter().enumerate() {
         let mut proof = tree.gen_proof(value).unwrap();
 
         match i % 3 {
@@ -192,8 +190,6 @@ fn test_mutate_proof_first_lemma() {
 
         let is_valid = proof.validate(root_hash);
         assert_eq!(is_valid, false);
-
-        i += 1;
     }
 }
 
@@ -201,7 +197,7 @@ fn test_mutate_proof_first_lemma() {
 fn test_tree_iter() {
     let values = (1..10).map(|x| vec![x]).collect::<Vec<_>>();
     let tree = MerkleTree::from_vec(digest, values.clone());
-    let iter = tree.iter().map(|x| x.clone()).collect::<Vec<_>>();
+    let iter = tree.iter().cloned().collect::<Vec<_>>();
 
     assert_eq!(values, iter);
 }
@@ -210,7 +206,7 @@ fn test_tree_iter() {
 fn test_tree_into_iter() {
     let values = (1..10).map(|x| vec![x]).collect::<Vec<_>>();
     let tree = MerkleTree::from_vec(digest, values.clone());
-    let iter = tree.into_iter().map(|x| x.clone()).collect::<Vec<_>>();
+    let iter = tree.into_iter().collect::<Vec<_>>();
 
     assert_eq!(values, iter);
 }
@@ -253,8 +249,8 @@ pub struct PublicKey {
 impl PublicKey {
     pub fn new(zero_values: Vec<Vec<u8>>, one_values: Vec<Vec<u8>>) -> Self {
         PublicKey {
-            zero_values: zero_values,
-            one_values: one_values,
+            zero_values,
+            one_values,
         }
     }
 

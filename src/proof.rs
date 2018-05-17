@@ -50,6 +50,7 @@ mod algorithm_serde {
         }
     }
 
+    #[cfg(test)]
     mod test {
         use super::*;
         use ring::digest::{
@@ -67,13 +68,13 @@ mod algorithm_serde {
         fn test_serialize_known_algorithms() {
             extern crate serde_json;
 
-            for alg in [SHA1, SHA256, SHA384, SHA512, SHA512_256].iter() {
+            for alg in &[SHA1, SHA256, SHA384, SHA512, SHA512_256] {
                 let mut serializer = serde_json::Serializer::with_formatter(
                     vec![],
                     serde_json::ser::PrettyFormatter::new(),
                 );
 
-                let _ = serialize(alg, &mut serializer).expect(&format!("{:?}", alg));
+                serialize(alg, &mut serializer).expect(&format!("{:?}", alg));
                 let alg_ = deserialize(&mut serde_json::Deserializer::from_slice(
                     &serializer.into_inner()[..],
                 )).expect(&format!("{:?}", alg));
@@ -206,7 +207,7 @@ impl Lemma {
     /// Attempts to generate a proof that the `idx`-th leaf is a member of
     /// the given tree. The `count` must equal the number of leaves in the
     /// `tree`. If `idx >= count`, `None` is returned.
-    pub fn new_by_index<T>(tree: &Tree<T>, idx: usize, count: usize) -> Option<Lemma>{
+    pub fn new_by_index<T>(tree: &Tree<T>, idx: usize, count: usize) -> Option<Lemma> {
         if idx >= count {
             return None;
         }
